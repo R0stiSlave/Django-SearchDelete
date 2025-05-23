@@ -1,0 +1,43 @@
+{% extends 'news/base.html' %}
+{% load custom_filter %}
+
+{% block title %}Поиск новостей{% endblock %}
+{% block header %}Поиск новостей{% endblock %}
+
+{% block content %}
+  <form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit">Искать</button>
+  </form>
+
+  <ul>
+    {% for post in search_results %}
+      <li>
+        <a href="{% url 'news_detail' post.id %}">{{ post.title|censor }}</a><br>
+        Автор: {{ post.author.user.username }}<br>
+        Дата: {{ post.created_at|date:"d.m.Y" }}<br>
+        {{ post.content|censor|slice:":100" }}...
+      </li>
+    {% empty %}
+      <li>По вашему запросу ничего не найдено.</li>
+    {% endfor %}
+  </ul>
+
+  {% if search_results.has_other_pages %}
+    <div>
+      {% if search_results.has_previous %}
+        <a href="?{% if request.GET.title %}title={{ request.GET.title }}&{% endif %}
+                  {% if request.GET.author__user__username %}author__user__username={{ request.GET.author__user__username }}&{% endif %}
+                  {% if request.GET.created_at %}created_at={{ request.GET.created_at }}&{% endif %}
+                  page={{ search_results.previous_page_number }}">Назад</a>
+      {% endif %}
+      <span>Страница {{ search_results.number }} из {{ search_results.paginator.num_pages }}</span>
+      {% if search_results.has_next %}
+        <a href="?{% if request.GET.title %}title={{ request.GET.title }}&{% endif %}
+                  {% if request.GET.author__user__username %}author__user__username={{ request.GET.author__user__username }}&{% endif %}
+                  {% if request.GET.created_at %}created_at={{ request.GET.created_at }}&{% endif %}
+                  page={{ search_results.next_page_number }}">Вперёд</a>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

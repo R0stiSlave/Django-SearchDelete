@@ -1,0 +1,21 @@
+{% extends 'news/base.html' %}
+{% load custom_filter %}
+
+{% block title %}{{ post.title|censor }}{% endblock %}
+{% block header %}{{ post.content|censor }}{% endblock %}
+
+{% block content %}
+  <p><strong>Дата:</strong> {{ post.created_at|date:"d.m.Y" }}</p>
+  <div>
+    {{ post.content|censor|linebreaks }}
+  </div>
+
+  {% if user.is_authenticated and user == post.author.user %}
+    <p>
+      <a href="{% url 'post_edit' post.pk %}">Редактировать</a> |
+      <a href="{% url 'post_delete' post.pk %}">Удалить</a>
+    </p>
+  {% endif %}
+
+  <p><a href="{% url 'news_list' %}">← Вернуться к списку</a></p>
+{% endblock %}

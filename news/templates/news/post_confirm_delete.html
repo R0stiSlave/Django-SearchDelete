@@ -1,0 +1,12 @@
+{% extends 'news/base.html' %}
+
+{% block title %}Удалить пост{% endblock %}
+
+{% block content %}
+  <h2>Удалить пост "{{ object.title }}"?</h2>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Подтвердить</button>
+    <a href="{% url 'news_list' %}">Отмена</a>
+  </form>
+{% endblock %}

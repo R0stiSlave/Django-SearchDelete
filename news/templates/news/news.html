@@ -1,0 +1,43 @@
+{% extends 'news/base.html' %}
+{% load custom_filter %}
+
+{% block title %}Список новостей{% endblock title %}
+{% block header %}Все новости{% endblock header %}
+
+{% block content %}
+  <p><a href="{% url 'news_create' %}">Создать новость</a></p>
+
+  <ul>
+    {% for post in news %}
+      {% if post.post_type == 'news' %}
+        <li>
+          <a href="{% url 'news_detail' post.id %}">{{ post.title|censor }}</a><br>
+          <small>{{ post.created_at|date:"d.m.Y" }}</small><br>
+          {{ post.content|censor|slice:":20" }}...
+        </li>
+      {% endif %}
+    {% empty %}
+      <li>Новостей пока нет.</li>
+    {% endfor %}
+  </ul>
+
+  <div>
+    {% if page_obj.has_previous %}
+      <a href="?page=1">1</a>
+      {% if page_obj.previous_page_number != 1 %}
+        ...
+        <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+      {% endif %}
+    {% endif %}
+
+    <strong>{{ page_obj.number }}</strong>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+      {% if paginator.num_pages != page_obj.next_page_number %}
+        ...
+        <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock content %}
